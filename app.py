@@ -66,6 +66,7 @@ def process_image():
     if request.method == 'POST':
         # 파일 받기
         file = request.files['file']
+        print(file)
         if file:
             # API 설정
             api_url = 'https://eoxy3e0azd.apigw.ntruss.com/custom/v1/29612/cb56e51bd632826fb10645cf94923e9934c4789df11256f9baaf17de98b0e7f9/general'
@@ -83,6 +84,7 @@ def process_image():
                 'timestamp': int(round(time.time() * 1000))
             }
             payload = {'message': json.dumps(request_json).encode('UTF-8')}
+            print(payload)
 
             try:
                 # 파일과 함께 페이로드 전송
@@ -90,8 +92,14 @@ def process_image():
                 response.raise_for_status()  # 요청 실패 시 예외 발생
                 result = response.json()
                 text_results = ' '.join([field['inferText'] for field in result['images'][0]['fields']])
+                print(text_results)
+                print("SUCCESS")
+                # return jsonify({'text': "SUCCESS"})
                 return jsonify({'text': text_results})
+
             except requests.exceptions.RequestException as e:
+                print("FAIL")
+                print(e)
                 return jsonify({'error': str(e)}), 500
 
     return jsonify({'error': 'No file provided'}), 400
